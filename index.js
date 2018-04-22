@@ -3,40 +3,21 @@
 const express = require('express');
 const getCurrentIp = require('./helpers/getCurrentIp');
 const getCurrentTime = require('./helpers/getCurrentTime');
+const logger = require('./middlewares/logger');
+const allowed = require('./middlewares/allowed');
 
 const PORT = process.argv[2] || 3000;
 const currentIp = getCurrentIp();
 const currentTime = getCurrentTime();
 
 const app = express();
-const shortenPath = '/shorten';
+const allowedPaths = [{ path: '/shorten', methods: ['POST', 'OPTIONS'] }];
 
-app.use((req, _, next) => {
-  console.log(`\x1b[33m--- ${req.method} ---\x1b[0m`);
-  next();
-});
-
-app.use((req, res, next) => {
-  if (req.path === shortenPath) {
-    res.append('Allow', 'POST, OPTIONS');
-
-    if (req.method === 'OPTIONS') {
-      res.send();
-      return;
-    }
-
-    if (req.method !== 'POST') {
-      res.sendStatus(405);
-      return;
-    }
-  }
-
-  next();
-});
-
+app.use(logger);
+app.use(allowed(allowedPaths));
 app.use(express.static('public'));
 
-app.post(shortenPath, (req, res) => {
+app.post(allowedPaths[0].path, (req, res) => {
   console.log('shorten');
   res.send();
 });
