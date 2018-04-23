@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const express = require('express');
+const { slug } = require('cuid');
 const getCurrentIp = require('./helpers/getCurrentIp');
 const getCurrentTime = require('./helpers/getCurrentTime');
 const validateUrl = require('./helpers/validateUrl');
@@ -36,7 +37,7 @@ app.post(allowedPaths[0].path, (req, res) => {
   }
 
   console.log('shorten req.body.url', req.body.url);
-  res.send();
+  res.send({ shortenedUrl: slug(req.body.url) });
 });
 
 app.options(allowedPaths[0].path, (req, res) => {
