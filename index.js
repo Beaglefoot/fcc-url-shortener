@@ -3,6 +3,7 @@
 const express = require('express');
 const getCurrentIp = require('./helpers/getCurrentIp');
 const getCurrentTime = require('./helpers/getCurrentTime');
+const validateUrl = require('./helpers/validateUrl');
 const logger = require('./middlewares/logger');
 const allowed = require('./middlewares/allowed');
 
@@ -23,6 +24,15 @@ app.post(allowedPaths[0].path, (req, res) => {
 
   if (!req.body.url) {
     res.status(400).send('Expected "url" as a parameter');
+    return;
+  }
+
+  if (!validateUrl(req.body.url)) {
+    res.send({
+      error:
+        'Wrong url format. Check that url is spelled correctly and try again'
+    });
+    return;
   }
 
   console.log('shorten req.body.url', req.body.url);
