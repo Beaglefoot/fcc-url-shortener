@@ -1,12 +1,20 @@
 #!/usr/bin/env node
 
+const fs = require('fs');
 const express = require('express');
+const mongoose = require('mongoose');
 const { slug } = require('cuid');
 const getCurrentIp = require('./helpers/getCurrentIp');
 const getCurrentTime = require('./helpers/getCurrentTime');
 const validateUrl = require('./helpers/validateUrl');
 const logger = require('./middlewares/logger');
 const allowed = require('./middlewares/allowed');
+require('./models/Url');
+
+const { MongoURI } = JSON.parse(fs.readFileSync('./.env', 'utf8'));
+
+mongoose.Promise = global.Promise;
+mongoose.connect(MongoURI);
 
 const PORT = process.argv[2] || 3000;
 const currentIp = getCurrentIp();
