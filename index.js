@@ -47,20 +47,15 @@ app.post(allowedPaths[0].path, ({ body: { url } }, res) => {
   const Url = mongoose.model('urls');
   const createNewRecord = () => {};
 
-  Url.findOne({ original: url }, (err, record) => {
-    if (err) {
-      console.error('Failed to read from DB:', err);
-      res.send({ error: 'Failed to read from DB' });
-    } else {
-      if (record) res.send({ shortenedUrl: record.shortId });
-      else {
-        const shortId = slug(url);
-        new Url({ original: url, shortId }).save();
-
-        res.send({ shortenedUrl: shortId });
-      }
-    }
-  });
+  Url.findOne({ original: url })
+    .then(
+      record => record || new Url({ original: url, shortId: slug(url) }).save()
+    )
+    .then(({ shortId }) => res.send({ shortenedUrl: shortId }))
+    .catch(err => {
+      console.log('Failed to get record from DB:', err);
+      res.sendStatus(500);
+    });
 });
 
 app.options(allowedPaths[0].path, (req, res) => {
