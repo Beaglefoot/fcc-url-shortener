@@ -28,15 +28,15 @@ app.use(allowed(allowedPaths));
 app.use(express.static('public'));
 app.use(express.json());
 
-app.post(allowedPaths[0].path, (req, res) => {
+app.post(allowedPaths[0].path, ({ body: { url } }, res) => {
   res.append('Access-Control-Allow-Origin', '*');
 
-  if (!req.body.url) {
+  if (!url) {
     res.status(400).send('Expected "url" as a parameter');
     return;
   }
 
-  if (!validateUrl(req.body.url)) {
+  if (!validateUrl(url)) {
     res.send({
       error:
         'Wrong url format. Check that url is spelled correctly and try again'
@@ -44,8 +44,23 @@ app.post(allowedPaths[0].path, (req, res) => {
     return;
   }
 
-  console.log('shorten req.body.url', req.body.url);
-  res.send({ shortenedUrl: slug(req.body.url) });
+  const Url = mongoose.model('urls');
+  const createNewRecord = () => {};
+
+  Url.findOne({ original: url }, (err, record) => {
+    if (err) {
+      console.error('Failed to read from DB:', err);
+      res.send({ error: 'Failed to read from DB' });
+    } else {
+      if (record) res.send({ shortenedUrl: record.shortId });
+      else {
+        const shortId = slug(url);
+        new Url({ original: url, shortId }).save();
+
+        res.send({ shortenedUrl: shortId });
+      }
+    }
+  });
 });
 
 app.options(allowedPaths[0].path, (req, res) => {
