@@ -1,6 +1,9 @@
+const matcher = require('matcher');
+
 module.exports = (paths = []) => (req, res, next) => {
   const isAllowed = paths.some(
-    ({ path, methods }) => path === req.path && methods.includes(req.method)
+    ({ path, methods }) =>
+      matcher.isMatch(req.path, path) && methods.includes(req.method)
   );
 
   if (isAllowed) {
