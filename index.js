@@ -25,9 +25,13 @@ const allowedPaths = [
   { path: '/shorten', methods: ['POST', 'OPTIONS'] },
   {
     path: '*',
-    methods: ['GET']
+    methods: ['GET', 'OPTIONS']
   }
 ];
+const optionsPaths = Object.values(allowedPaths)
+  .filter(({ methods }) => methods.includes('OPTIONS'))
+  .map(({ path }) => path);
+console.log('optionsPaths', optionsPaths);
 
 app.use(logger);
 app.use(allowed(allowedPaths));
@@ -63,13 +67,6 @@ app.post(allowedPaths[0].path, ({ body: { url } }, res) => {
     });
 });
 
-app.options(allowedPaths[0].path, (req, res) => {
-  res.append('Access-Control-Allow-Origin', '*');
-  res.append('Access-Control-Allow-Headers', 'Content-Type');
-
-  res.send();
-});
-
 app.get('/:shortId', (req, res) => {
   const { shortId } = req.params;
   const Url = mongoose.model('urls');
@@ -82,6 +79,13 @@ app.get('/:shortId', (req, res) => {
       console.log('Failed to get record from DB:', err);
       res.sendStatus(500);
     });
+});
+
+app.options(optionsPaths, (req, res) => {
+  res.append('Access-Control-Allow-Origin', '*');
+  res.append('Access-Control-Allow-Headers', 'Content-Type');
+
+  res.send();
 });
 
 app.listen(PORT, () =>
