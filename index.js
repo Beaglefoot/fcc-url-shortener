@@ -11,7 +11,7 @@ const logger = require('./middlewares/logger');
 const allowed = require('./middlewares/allowed');
 require('./models/Url');
 
-const { MongoURI } = JSON.parse(fs.readFileSync('./.env', 'utf8'));
+const { MongoURI, BoxURL } = JSON.parse(fs.readFileSync('./.env', 'utf8'));
 
 mongoose.Promise = global.Promise;
 mongoose.connect(MongoURI);
@@ -24,6 +24,10 @@ const app = express();
 const allowedPaths = [
   { path: '/shorten', methods: ['POST', 'OPTIONS'] },
   {
+    path: '/',
+    methods: ['GET', 'OPTIONS']
+  },
+  {
     path: '*',
     methods: ['GET', 'OPTIONS']
   }
@@ -31,12 +35,16 @@ const allowedPaths = [
 const optionsPaths = Object.values(allowedPaths)
   .filter(({ methods }) => methods.includes('OPTIONS'))
   .map(({ path }) => path);
-console.log('optionsPaths', optionsPaths);
 
+app.set('view engine', 'ejs');
 app.use(logger);
 app.use(allowed(allowedPaths));
 app.use(express.static('public'));
 app.use(express.json());
+
+app.get('/', (_, res) => {
+  res.render('index', { endpoint: `${BoxURL}:${PORT}` });
+});
 
 app.post(allowedPaths[0].path, ({ body: { url } }, res) => {
   res.append('Access-Control-Allow-Origin', '*');
