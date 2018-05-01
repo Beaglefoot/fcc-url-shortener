@@ -72,7 +72,9 @@ app.post(allowedPaths[0].path, ({ body: { url } }, res) => {
     .then(
       record => record || new Url({ original: url, shortId: slug(url) }).save()
     )
-    .then(({ shortId }) => res.send({ shortenedUrl: shortId }))
+    .then(({ shortId }) =>
+      res.send({ shortenedUrl: `${BoxURL}:${PORT}/${shortId}` })
+    )
     .catch(err => {
       console.log('Failed to get record from DB:', err);
       res.sendStatus(500);
