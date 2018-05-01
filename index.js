@@ -11,7 +11,9 @@ const logger = require('./middlewares/logger');
 const allowed = require('./middlewares/allowed');
 require('./models/Url');
 
-const { MongoURI, BoxURL } = JSON.parse(fs.readFileSync('./.env', 'utf8'));
+const { MongoURI, BoxURL, NODE_ENV } = JSON.parse(
+  fs.readFileSync('./.env', 'utf8')
+);
 
 mongoose.Promise = global.Promise;
 mongoose.connect(MongoURI);
@@ -19,6 +21,7 @@ mongoose.connect(MongoURI);
 const PORT = process.argv[2] || 3000;
 const currentIp = getCurrentIp();
 const currentTime = getCurrentTime();
+const boxPlusPort = NODE_ENV === 'production' ? BoxURL : `${BoxURL}:${PORT}`;
 
 const app = express();
 const allowedPaths = [
@@ -43,7 +46,7 @@ app.use(express.static('public'));
 app.use(express.json());
 
 app.get('/', (_, res) => {
-  res.render('index', { endpoint: `${BoxURL}:${PORT}` }, (err, html) => {
+  res.render('index', { endpoint: boxPlusPort }, (err, html) => {
     res.send(html);
   });
 });
@@ -73,7 +76,7 @@ app.post(allowedPaths[0].path, ({ body: { url } }, res) => {
       record => record || new Url({ original: url, shortId: slug(url) }).save()
     )
     .then(({ shortId }) =>
-      res.send({ shortenedUrl: `${BoxURL}:${PORT}/${shortId}` })
+      res.send({ shortenedUrl: `${boxPlusPort}/${shortId}` })
     )
     .catch(err => {
       console.log('Failed to get record from DB:', err);

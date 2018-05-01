@@ -14,19 +14,19 @@ The third project in API section on [freeCodeCamp](https://www.freecodecamp.org/
 
 Input
 ```
-curl -X POST 'https://fcc-url-shortener-bf.glitch.me:3000/shorten' -d '{ "url": "http://yandex.ru" }' -H 'Content-Type: application/json'
+curl -X POST 'https://fcc-url-shortener-bf.glitch.me/shorten' -d '{ "url": "http://yandex.ru" }' -H 'Content-Type: application/json'
 ```
 
 Output
 ```
-{"shortenedUrl":"https://fcc-url-shortener-bf.glitch.me:3000/b00nzpd"}
+{"shortenedUrl":"https://fcc-url-shortener-bf.glitch.me/b00nzpd"}
 ```
 
 #### Redirection:
 
 Input
 ```
-curl -X GET 'https://fcc-url-shortener-bf.glitch.me:3000/b00nzpd'
+curl -X GET 'https://fcc-url-shortener-bf.glitch.me/b00nzpd'
 ```
 
 Output
