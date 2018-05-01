@@ -43,8 +43,12 @@ app.use(express.static('public'));
 app.use(express.json());
 
 app.get('/', (_, res) => {
-  res.render('index', { endpoint: `${BoxURL}:${PORT}` });
+  res.render('index', { endpoint: `${BoxURL}:${PORT}` }, (err, html) => {
+    res.send(html);
+  });
 });
+
+app.get('/favicon.ico', (_, res) => res.send());
 
 app.post(allowedPaths[0].path, ({ body: { url } }, res) => {
   res.append('Access-Control-Allow-Origin', '*');
