@@ -20,15 +20,38 @@
 
       <h3>Examples of usage:</h3>
 
+      <h4>Shortened link creation:</h4>
+
       <div class="example">
-        <div class="input"><b>Url</b></div>
-        <div class="output"><b>Response</b></div>
+        <div class="input"><b>Input</b></div>
+      </div>
+      <div class="example">
+        <div class="input">curl -X POST '<%= endpoint %>/shorten' -d '{ "url": "http://yandex.ru" }' -H 'Content-Type: application/json'</div>
       </div>
 
       <div class="example">
-        <div class="input"><%= endpoint %></div>
-        <div class="output">{}</div>
+        <div class="output"><b>Output</b></div>
       </div>
+      <div class="example">
+        <div class="output">{"shortenedUrl":"<%= endpoint %>/b00nzpd"}</div>
+      </div>
+
+      <h4>Redirection:</h4>
+
+      <div class="example">
+        <div class="input"><b>Input</b></div>
+      </div>
+      <div class="example">
+        <div class="input">curl -X GET '<%= endpoint %>/b00nzpd'</div>
+      </div>
+
+      <div class="example">
+        <div class="output"><b>Output</b></div>
+      </div>
+      <div class="example">
+        <div class="output">Found. Redirecting to http://yandex.ru</div>
+      </div>
+      
     </div>
   </body>
 </html>

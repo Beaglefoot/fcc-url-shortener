@@ -17,6 +17,8 @@ a {
 .example {
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
+  margin: 0.2em 0;
 }
 
 .input,
@@ -36,11 +38,4 @@ a {
 
 .output > b {
   border-bottom: 2px solid #c2de1f;
-}
-
-@media (max-width: 684px) {
-  .example {
-    flex-direction: column;
-    margin: 1em 0;
-  }
 }
