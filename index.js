@@ -11,9 +11,10 @@ const logger = require('./middlewares/logger');
 const allowed = require('./middlewares/allowed');
 require('./models/Url');
 
-const { MongoURI, BoxURL, NODE_ENV } = JSON.parse(
-  fs.readFileSync('./.env', 'utf8')
-);
+const { MongoURI, BoxURL, NODE_ENV } =
+  process.env.NODE_ENV === 'production'
+    ? process.env
+    : JSON.parse(fs.readFileSync('./.env', 'utf8'));
 
 mongoose.Promise = global.Promise;
 mongoose.connect(MongoURI);
